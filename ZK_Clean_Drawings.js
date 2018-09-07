@@ -4,16 +4,16 @@
  //multiplie la position en Z de chaque Peg selectionné par un facteur (0.1)
  //Ne fonctionne pas sur les pegs qui ont des clefs. 
  
-function ZK_Flat_Z(){
+function ZK_Clean_Drawings(){
 
 
-	MessageLog.trace( "-------ZK_FLAT_Z-------");
+	MessageLog.trace( "-------ZK_CLEAN_DRAWINGS-------");
 
 	var cf = frame.current(); 
 
 	var factor = 0.1;
 
-	scene.beginUndoRedoAccum("ZK_Flat_Z"); 
+	scene.beginUndoRedoAccum("ZK_Clean_Drawings"); 
 
 
 	if( selection.numberOfNodesSelected()>0){ 
@@ -22,7 +22,7 @@ function ZK_Flat_Z(){
 		
 		var groups_to_analyse = [];
 
-		var pegs_to_treat =[];
+		var drawings_to_treat =[];
 
 		var selected_nodes = selection.selectedNodes(0);
 
@@ -32,10 +32,10 @@ function ZK_Flat_Z(){
 			var currentNode = selected_nodes[n];
 
 			// on ajoute le peg à la liste de traitement
-			if(node.type(currentNode)=="PEG"){
+			if(node.type(currentNode)=="READ"){
 				
 				MessageLog.trace(currentNode+" selected");
-				pegs_to_treat.push(currentNode);
+				drawings_to_treat.push(currentNode);
 
 			} 
 
@@ -76,11 +76,13 @@ function ZK_Flat_Z(){
 						
 					}
 	
-					if( sub_node_type == "PEG"){
+					if( sub_node_type == "READ"){
 
 						// on ajoute le peg à la liste de traitement
 						MessageLog.trace(sub_node_name+" selected");
-						pegs_to_treat.push(sub_node_name);
+						drawings_to_treat.push(sub_node_name);
+
+
 						
 					}
 					
@@ -88,56 +90,31 @@ function ZK_Flat_Z(){
 			
 		}
 
-		MessageLog.trace( "PEGS SELECTED "+pegs_to_treat.length);
+		MessageLog.trace( "DRAWINGS SELECTED "+drawings_to_treat.length);
 
 
 		// On multiplie le Z de chaque peg par le facteur (0.1 de base)
-		for (var p = 0 ; p < pegs_to_treat.length ; p ++){
+		for (var d = 0 ; d < drawings_to_treat.length ; d ++){
 
-			currentPeg = pegs_to_treat[p];
+			currentDrawing = drawings_to_treat[d];
+						//On clean le drawing  
 
-			var old_Z = 0
-			var new_Z = 0;
+			node.setTextAttr( currentDrawing  , "CAN_ANIMATE", cf , true);  
 
-			//On parcour les différents systemes de coordonnées 
-			if(node.getTextAttr(currentPeg, cf, "POSITION.Z" )){
+			//Code pour supprimmer les eventuelles clefs au niveau du drawing
 
-				old_Z = node.getTextAttr(currentPeg, cf, "POSITION.Z" );
-				new_Z = old_Z*factor;
-				node.setTextAttr(currentPeg  , "POSITION.Z", cf , new_Z);  
+			//Code pour supprimer tout les elements non exposés
 
-			}
-			/*if(node.getTextAttr(currentPeg, cf, "POS.Z" )){
 
-				old_Z = node.getTextAttr(currentPeg, cf, "POS.Z" );
-				new_Z = old_Z*factor;
-				node.setTextAttr(currentPeg  , "POS.Z", cf , new_Z); 
-			}
-			if(node.getTextAttr(currentPeg, cf, "OFFSET.Z" )){
 
-				old_Z = node.getTextAttr(currentPeg, cf, "OFFSET.Z" );
-				new_Z = old_Z*factor;
-				node.setTextAttr(currentPeg  , "OFFSET.Z", cf , new_Z); 
-			}
-			if(node.getTextAttr(currentPeg, cf, "POSITION.SEPARATE.Z" )){
-
-				old_Z = node.getTextAttr(currentPeg, cf, "POSITION.SEPARATE.Z" );
-				new_Z = old_Z*factor;
-				node.setTextAttr(currentPeg  , "POSITION.SEPARATE.Z", cf , new_Z); 
-			}*/
-
-			if(old_Z){
-
-				MessageLog.trace("PEG "+currentPeg+" Z changed from "+old_Z+" to "+new_Z);
-
-			}
-
+			node.setTextAttr( currentDrawing  , "USE_DRAWING_PIVOT", cf , "Apply Embedded Pivot on Parent Peg");  
+			node.setTextAttr( currentDrawing  , "CAN_ANIMATE", cf , false);  
 			
 
 		}
 
      	scene.endUndoRedoAccum();  
-     	MessageLog.trace( "-------ZK_FLAT_Z------ENDLOG-");
+     	MessageLog.trace( "-------ZK_CLEAN_DRAWINGS------ENDLOG-");
 
  	}else{  
 
