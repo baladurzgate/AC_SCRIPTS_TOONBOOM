@@ -1,8 +1,16 @@
 
-//Version du 20/08/2018
+//Version du 07/09/2018
  //Alexandre Cormier
- //multiplie la position en Z de chaque Peg selectionné par un facteur (0.1)
- //Ne fonctionne pas sur les pegs qui ont des clefs. 
+//Nettoie les drawing dans un dossier (animate: off, embed on parent peg:true)
+/*
+Reste à coder : 
+-Message box affichant tout les drawings corrigés 
+-Options de clean 
+-Function de suppression des elements non exposés
+
+
+
+*/
  
 function ZK_Clean_Drawings(){
 
